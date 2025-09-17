@@ -1,7 +1,13 @@
-from flask import Flask, jsonify, request, render_template_string
+from flask import Flask, jsonify, request, render_template
 import random
+import os.path
 
-app = Flask(__name__)
+from idna.idnadata import scripts
+from werkzeug.utils import send_from_directory
+
+app = Flask(__name__,
+            template_folder='../Templates',
+            static_folder='../Static')
 
 
 
@@ -45,14 +51,36 @@ riddles = [
     {"id": 6, "riddle": "If you want to read, then you must know me, and if you don't know me, then you won't read anything.", "answer": "alphabet"},
     {"id": 7, "riddle": "From the edge of the sky, from behind the oak grove, the black-browed oxen came out: they brought a jug of water, they watered both the forest and the field.", "answer": "clouds"}
 ]
-HTML = '''
-'''
 
+def check_files():
+    template_path = os.path.join(os.path.dirname(__file__), '../Templates')
+    static_path = os.path.join(os.path.dirname(__file__), '../Static')
+    if not os.path.exists(template_path, static_path):
+        print(f"❌ ERROR: File index.html or/and style.css are not found on this path: {template_path}")
+        print("📁 Make sure, that the structure of folders is like below:")
+        print("   Templates/")
+        print("   ├── index.html")
+        print("   │ ")
+        print("   ├── Static/")
+        print("   │")
+        print("   ├── CSS/")
+        print("   │   └── style.css")
+        print("   ├── JS/")
+        print("   │   └── script.js")
+        return False
+    return True
 
 @app.route('/')
 def home():
-   return render_template_string(HTML)
+   return render_template('index.html')
 
+@app.route('/CSS/<path:filename>')
+def css_files(filename):
+    return send_from_directory('../Static/CSS', filename)
+
+@app.route('/JS/<path:filename>')
+def js_files(filename):
+    return send_from_directory('../Static/JS', filename)
 
 @app.route('/api/animals')
 def get_animals():
@@ -100,12 +128,21 @@ def add_numbers(num1, num2):
    })
 
 
-@app.route('/api/hello/<name>')
-def hello_name(name):
-   return jsonify({
-       "message": f"Hello, {name}! How are you? 👋",
-       "name": name
-   })
+@app.route('/api/greeting', methods=['POST'])
+def getGreeting():
+    try:
+        data = request.json
+        name = data['name']
+        age = data.get('age', 0)
+
+        if age > 0:
+            message = f"👋 Hello, {name}! You're {age} - this is good! 🎈"
+        else:
+            message = f"👋 Hello, {name}! Nice to meet you! 😊"
+
+        return jsonify({"message": message})
+    except KeyError as e:
+        return  jsonify({"error": "Name expected"}), 400
 
 @app.route("/api/riddle")
 def get_riddle():
