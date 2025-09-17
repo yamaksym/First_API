@@ -1,8 +1,6 @@
 from flask import Flask, jsonify, request, render_template
 import random
 import os.path
-
-from idna.idnadata import scripts
 from werkzeug.utils import send_from_directory
 
 app = Flask(__name__,
