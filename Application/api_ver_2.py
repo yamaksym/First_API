@@ -115,15 +115,85 @@ def get_joke():
    })
 
 
-@app.route('/api/math/<int:num1>/<int:num2>')
-def add_numbers(num1, num2):
-   result = num1 + num2
-   return jsonify({
-       "number1": num1,
-       "number2": num2,
-       "result": result,
-       "message": f"{num1} + {num2} = {result} 🧮"
-   })
+@app.route('/api/add', methods=['POST'])
+def calculate_add():
+    try:
+        data = request.json
+        if not data:
+            return jsonify({"error": "Data not transferred"}), 400
+
+        num1 = data.get('num1')
+        num2 = data.get('num2')
+
+        if num1 is None or num2 is None:
+            return jsonify({"error": "You should write both numbers"}), 400
+
+        result = num1 + num2
+        return jsonify({
+            "message": f"🧮 {num1} + {num2} = {result} ✨"
+        })
+    except Exception as e:
+        return jsonify({"error": "Calculation error"}), 400
+
+@app.route('/api/subtract', methods=['POST'])
+def calculate_subtract():
+    try:
+        data = request.json
+        if not data:
+            return jsonify({"error": "Data not transferred"}), 400
+
+        num3 = data.get('num3')
+        num4 = data.get('num4')
+
+        if num3 is None or num4 is None:
+            return jsonify({"error": "You should write both numbers"}), 400
+
+        result2 = num3 - num4
+        return jsonify({
+            "message": f"🧮 {num3} - {num4} = {result2} ✨"
+        })
+    except Exception as e:
+        return jsonify({"error": "Calculation error"}), 400
+
+@app.route('/api/multiply', methods=['POST'])
+def calculate_multiply():
+    try:
+        data = request.json
+        if not data:
+            return jsonify({"error": "Data not transferred"}), 400
+
+        num5 = data.get('num5')
+        num6 = data.get('num6')
+
+        if num5 is None or num6 is None:
+            return jsonify({"error": "You should write both numbers"}), 400
+
+        result3 = num5 * num6
+        return jsonify({
+            "message": f"🧮 {num5} * {num6} = {result3} ✨"
+        })
+    except Exception as e:
+        return jsonify({"error": "Calculation error"}), 400
+
+@app.route('/api/divide', methods=['POST'])
+def calculate_divide():
+    try:
+        data = request.json
+        if not data:
+            return jsonify({"error": "Data not transferred"}), 400
+
+        num7 = data.get('num7')
+        num8 = data.get('num8')
+
+        if num7 is None or num8 is None:
+            return jsonify({"error": "You should write both numbers"}), 400
+
+        result4 = num7 / num8
+        return jsonify({
+            "message": f"🧮 {num7} / {num8} = {result4} ✨"
+        })
+    except Exception as e:
+        return jsonify({"error": "Calculation error"}), 400
 
 
 @app.route('/api/greeting', methods=['POST'])
